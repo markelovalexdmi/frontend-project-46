@@ -1,8 +1,10 @@
-name: hello-world
+name: gendiff check
 on: push
 jobs:
   my-job:
     runs-on: ubuntu-latest
     steps:
-      - name: my-step
-        run: echo "Hello World!"
+      - name: make lint
+        run: make lint
+      - name: make test
+        run: make test
