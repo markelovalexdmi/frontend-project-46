@@ -1,23 +1,29 @@
 import _ from 'lodash';
 
-const compareTwoObjects = (object1, object2) => {
-  const sortedUniqObjectKeys = _.uniq(
-    _.sortBy([...Object.keys(object1), ...Object.keys(object2)])
+const compareTwoObjects = (cont1, cont2) => {
+  const arrowKeysFile1 = Object.keys(cont1);
+  const arrowKeysFile2 = Object.keys(cont2);
+  const sortedUniqObjectKeys = _.sortBy(
+    _.union(arrowKeysFile1, arrowKeysFile2),
   );
 
-  const comparisonResult = sortedUniqObjectKeys.map((key) => {
-    if (object1[key] === object2[key]) {
-      return `  ${key}: ${object1[key]}`;
-    }
-    if (Object.hasOwn(object1, key) && Object.hasOwn(object2, key)) {
-      return [`- ${key}: ${object1[key]}`, `+ ${key}: ${object2[key]}`];
-    }
-    if (Object.hasOwn(object1, key)) {
-      return `- ${key}: ${object1[key]}`;
-    }
-    return `+ ${key}: ${object2[key]}`;
-  });
+  const result = sortedUniqObjectKeys.map((key) => {
+    const value1 = cont1[key];
+    const value2 = cont2[key];
 
-  return comparisonResult.flat().join('\n');
+    if (_.isEqual(value1, value2)) {
+      return `    ${key}: ${value1}`;
+    }
+    if (!Object.hasOwn(cont1, key)) {
+      return `  + ${key}: ${value2}`;
+    }
+    if (!Object.hasOwn(cont2, key)) {
+      return `  - ${key}: ${value1}`;
+    }
+    return [`  - ${key}: ${value1}`, `  + ${key}: ${value2}`];
+  });
+  return `{
+${result.flat().join('\n')}
+}`;
 };
 export default compareTwoObjects;
